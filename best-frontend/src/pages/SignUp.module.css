@@ -1,0 +1,137 @@
+.container {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .container > h1 {
+    margin-bottom: 20px;
+  }
+  
+  .container > form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .container input {
+    width: 100%;
+    font-size: 20px;
+    padding: 10px;
+    border: none;
+    outline: none;
+    border-bottom: 1px solid black;
+  }
+  
+  .container input::placeholder {
+    font-size: 12px;
+    font-style: italic;
+  }
+  
+  .parition {
+    background-color: #4e148c5d;
+    width: 90%;
+    max-width: 1000px;
+    border-radius: 20px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
+      rgba(0, 0, 0, 0.3) 0px 30px 60px -30px,
+      rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+    display: flex;
+  }
+  .left {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    padding: 1em;
+  }
+  .left h1 {
+    font-family: "Montserrat";
+    font-weight: 500;
+    color: white;
+    font-size: 3em;
+  }
+  .left p {
+    font-family: "MickKelly Italic";
+    color: white;
+    margin-top: 20px;
+    text-decoration: underline;
+    font-weight: 500;
+  }
+  .left,
+  .right {
+    width: 50%;
+  }
+  .right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #4e148c;
+    border-radius: 20px;
+    color: white;
+    flex-direction: column;
+    box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
+    padding-top: 2em;
+  }
+  .right h1 {
+    font-family: "Montserrat";
+    font-weight: 500;
+  }
+  .form {
+    margin: 2em;
+  }
+  .form label {
+    font-family: "MickKelly Italic";
+  }
+  .field {
+    margin-top: 1em;
+  }
+  input::placeholder {
+    font-family: "MickKelly Italic";
+  }
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1em;
+  }
+  .btn button {
+    width: 100%;
+    max-width: 200px;
+    font-family: "Montserrat";
+    background-color: #613dc1;
+    font-weight: 600;
+  }
+  .span {
+    font-family: "Montserrat";
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+  }
+  .signUp {
+    color: #aa8ff7;
+    margin-left: 20px;
+  }
+  
+  @media screen and (max-width:750px)
+  {
+      .parition
+      {
+          flex-direction: column;
+      }
+      .left,
+      .right{
+          width: 100%;
+      }
+      .container
+      {
+          height: 100vh;
+      }
+      .left 
+      {
+          display: none;
+      }
+  }
