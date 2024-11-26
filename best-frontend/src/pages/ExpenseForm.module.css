@@ -1,0 +1,69 @@
+.container 
+{
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: center;
+    font-family: 'Montserrat';
+}
+.container h1 
+{
+    font-weight: 500;
+    margin: 0.4em;
+}
+.form 
+{
+    padding: 1em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    flex-direction: column;
+}
+.form label {
+    font-family: "MickKelly Italic";
+  }
+  .field {
+    margin-top: 1em;
+    display: flex;
+    flex-direction: column;
+  }
+  input::placeholder {
+    font-family: "MickKelly Italic";
+    font-size: 1rem;
+  }
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1em;
+  }
+  .btn button {
+    width: 100%;
+    max-width: 200px;
+    font-family: "Montserrat";
+    background-color: #613dc1;
+    font-weight: 600;
+  }
+  .form input 
+  {
+    padding: 0.6em;
+    outline: none;
+    border: none;
+    font-size: 1.4em;
+  }
+  @media screen and (max-width:924px) {
+    .container
+    {
+      width: 100%;
+      align-items: center;
+    }
+    .form
+    {
+      width: 100%;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+    }
+  }

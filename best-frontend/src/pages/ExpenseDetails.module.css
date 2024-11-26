@@ -1,0 +1,83 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding: 1em;
+  flex-wrap: wrap;
+}
+.balance {
+  padding: 1em;
+  width: 350px;
+  height: 100px;
+  max-width: 400px;
+  background-color: white;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
+    rgba(0, 0, 0, 0.3) 0px 30px 60px -30px,
+    rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+  border-radius: 12px;
+  font-family: "Montserrat";
+  font-size: 0.7rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.balance h3 {
+  font-size: 3em;
+}
+.amountContainer {
+  display: flex;
+  padding: 1em;
+  margin: 1em;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-evenly;
+  row-gap: 20px;
+}
+.results {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  
+  background-color: white;
+  padding: 0.5em;
+  border-radius: 12px;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset,
+    rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+}
+.results div h3{
+  text-align: center;
+  font-weight: 500;
+}
+.icon {
+  width: 80px;
+  padding: 1em;
+  border: 1px solid white;
+  border-radius: 50%;
+  box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
+}
+.icon img {
+  width: 100%;
+}
+.results h3 {
+  font-family: "Montserrat";
+  font-weight: 400;
+}
+.results p {
+  font-size: 2.4rem;
+  color: #00ff2a;
+  font-weight: 600;
+}
+.expense {
+  color: red !important;
+}
+
+@media screen and (min-width:530px) {
+  .amountContainer
+  {
+    column-gap: 20px;
+  }
+}

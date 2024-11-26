@@ -1,0 +1,41 @@
+.container {
+  width: 40%;
+  overflow: scroll;
+  height: 400px;
+}
+.item {
+  display: flex;
+  background-color: white;
+  padding: 0.5em;
+  font-family: "Montserrat";
+  margin: 1em;
+  border-radius: 12px;
+  box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
+  flex-direction: column;
+}
+.items {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.delete {
+  background-color: red;
+  border-radius: 50%;
+  height: 40px;
+  width: 40px;
+}
+.update {
+  background-color: #613dc1;
+}
+.desc {
+  font-weight: 500;
+}
+
+@media screen and (max-width:924px) {
+  .container
+  {
+    width: 90%;
+    max-width: 500px;
+    margin: auto;
+  }
+}
