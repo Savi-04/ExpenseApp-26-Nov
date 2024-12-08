@@ -2,7 +2,7 @@ const UserModel = require("../Models/User");
 
 const addTransaction = async (req, res) => {
     const { id } = req.user;  //user is what we set from decoding jwt in jwtAuthenticator 
-    console.log(id)  //to be removed
+    
     try {
         const userData = await UserModel.findByIdAndUpdate(
             id,
@@ -35,11 +35,11 @@ const getAllTransactions = async (req, res) => {
     
     console.log("get transaction request from Frontend")  //to be removed
     const { id } = req.user;
-    console.log(`This is req.user --> ${req.user}`)  //to be removed
+
     try {
         const userData = await UserModel.findById(id).select('expenses');
         
-        console.log(`This is User DATA --> ${userData}`)  //to be removed
+
         res.status(200)
         .json({
             message: "Fetched Expenses successfully",

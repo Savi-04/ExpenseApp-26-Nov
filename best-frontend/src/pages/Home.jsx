@@ -57,7 +57,7 @@ function Home() {
             }
             const result = await response.json();
             handleSuccess(result?.message)
-            console.log('--result', result.data);
+            
             setExpenses(result.data);
         } catch (err) {
             handleError(err);
@@ -80,7 +80,7 @@ function Home() {
                 return
             }
             const result = await response.json();
-            console.log('--result', result.data);   //to be removed
+            
             setExpenses(result.data);
         } catch (err) {
             handleError(err);
@@ -109,7 +109,7 @@ function Home() {
             }
             const result = await response.json();
             handleSuccess(result?.message)
-            console.log('--result', result.data);
+            
             setExpenses(result.data);
         } catch (err) {
             handleError(err);
@@ -123,7 +123,7 @@ function Home() {
        
         try {
 
-            console.log("updateTransaction Body")    //to be removed
+            
             const url = `${APIUrl}/expenses/${id}`;
             const options = {
                 method: "PUT",
@@ -141,7 +141,7 @@ function Home() {
             }
             const result = await response.json();
             handleSuccess(result?.message)
-            console.log('--result', result.data);
+            
             setExpenses(result.data);
         } catch (err) {
             handleError(err);

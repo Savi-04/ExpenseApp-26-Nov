@@ -66,7 +66,7 @@ async function login(req, res){
             const jwtToken = jwt.sign({email: userExists.email, id: userExists._id},
                 process.env.JWT_SECRET, { expiresIn: '24h' }
             )
-        //    console.log("sent Jwt token is --", jwtToken)       //to be removed
+
             return res.status(201).json({
                 message: "Sign in Successful",
                 success: true, 

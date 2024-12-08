@@ -16,21 +16,21 @@ function UpdatorRender({
     const temp = { ...tempUpdateObj };
     temp[name] = value;
     setTempUpdateObj(temp);
-    console.log(tempUpdateObj);
+    
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("handleSubmit is running");
+    
 
     // if((tempUpdateObj["text"] === '' && tempUpdateObj["amount"] === '')){
-    //     console.log("Condition for both empty")
+    
     //     return handleError('Both cannot be left empty')
 
     // }
 
     if (tempUpdateObj["text"] === "") {
-      console.log("Condition for text empty");
+      
       tempUpdateObj.text = updateExp.text;
 
       updateTransaction(tempUpdateObj, updateExp._id);
@@ -39,7 +39,7 @@ function UpdatorRender({
     }
 
     if (tempUpdateObj["amount"] === "") {
-      console.log("Condition for amount empty");
+      
       tempUpdateObj.amount = updateExp.amount;
 
       updateTransaction(tempUpdateObj, updateExp._id);
@@ -51,7 +51,7 @@ function UpdatorRender({
     updateDisplayHandlerToggler();
   };
 
-  console.log("Running");
+  
   return (
     <div className={styles.container}>
       <form className={styles.form} onSubmit={handleSubmit}>
