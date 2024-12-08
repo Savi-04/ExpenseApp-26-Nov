@@ -35,9 +35,9 @@ jobs:
 
         # Backend setup
         cd backend || exit 1
+        rm -rf node_modules || exit 1
         npm install --silent || exit 1
-        npm uninstall bcrypt || exit 1
-        npm install bcrypt@5 || exit 1
+      
 
         # Frontend setup
         cd ../best-frontend || exit 1
