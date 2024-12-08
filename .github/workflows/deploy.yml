@@ -18,7 +18,25 @@ jobs:
       with:
         node-version: '20' # Matches your Node.js version on EC2
 
+    - name: Detect Changes
+      id: changes
+      run: |
+        echo "Detecting changes..."
+        BACKEND_CHANGED=$(git diff --name-only HEAD^ HEAD | grep -q '^backend/' && echo "true" || echo "false")
+        FRONTEND_CHANGED=$(git diff --name-only HEAD^ HEAD | grep -q '^best-frontend/' && echo "true" || echo "false")
+        echo "BACKEND_CHANGED=$BACKEND_CHANGED" >> $GITHUB_ENV
+        echo "FRONTEND_CHANGED=$FRONTEND_CHANGED" >> $GITHUB_ENV
+
+    - name: Cache Node.js Modules
+      uses: actions/cache@v3
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+
     - name: Build Frontend
+      if: env.FRONTEND_CHANGED == 'true'
       run: |
         cd best-frontend
         npm install
@@ -37,16 +55,28 @@ jobs:
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan -H $EC2_HOST >> ~/.ssh/known_hosts
 
-        # Transfer files to EC2
-        scp -r ./backend $EC2_USER@$EC2_HOST:/home/$EC2_USER/ExpenseApp-26-Nov/backend
-        scp -r ./best-frontend/dist $EC2_USER@$EC2_HOST:/home/$EC2_USER/ExpenseApp-26-Nov/best-frontend/dist
+        if [ "$BACKEND_CHANGED" = "true" ]; then
+          echo "Deploying backend..."
+          tar -czf backend.tar.gz backend
+          scp backend.tar.gz $EC2_USER@$EC2_HOST:/home/$EC2_USER/ExpenseApp-26-Nov/
+          ssh $EC2_USER@$EC2_HOST "
+            cd /home/$EC2_USER/ExpenseApp-26-Nov/
+            tar -xzf backend.tar.gz
+            cd backend
+            npm install --silent
+            npm install -g nodemon --silent
+            sudo systemctl restart backend.service && sudo systemctl status backend.service
+          "
+        fi
 
-        # Install backend dependencies and restart services
-        ssh $EC2_USER@$EC2_HOST "
-          cd /home/$EC2_USER/ExpenseApp-26-Nov/backend
-          npm install
-          npm install -g nodemon
-          sudo systemctl restart backend.service
-          sudo systemctl restart frontend.service
-        "
+        if [ "$FRONTEND_CHANGED" = "true" ]; then
+          echo "Deploying frontend..."
+          tar -czf frontend-dist.tar.gz best-frontend/dist
+          scp frontend-dist.tar.gz $EC2_USER@$EC2_HOST:/home/$EC2_USER/ExpenseApp-26-Nov/
+          ssh $EC2_USER@$EC2_HOST "
+            cd /home/$EC2_USER/ExpenseApp-26-Nov/
+            tar -xzf frontend-dist.tar.gz
+            sudo systemctl restart frontend.service && sudo systemctl status frontend.service
+          "
+        fi
 
