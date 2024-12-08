@@ -1,4 +1,4 @@
-name: Deploy MERN App to EC2
+name: CI/CD for MERN App
 
 on:
   push:
@@ -10,60 +10,44 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Code
+    - name: Checkout repository
       uses: actions/checkout@v3
-
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '20'
 
     - name: Deploy to EC2
       env:
-        SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
-        EC2_HOST: ${{ secrets.EC2_HOST }}
         EC2_USER: ${{ secrets.EC2_USER }}
+        EC2_HOST: ${{ secrets.EC2_HOST }}
+        DEPLOY_DIR: ${{ secrets.DEPLOY_DIR }}
+        EC2_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
       run: |
-        echo "Step 1: Setting up SSH keys"
-        mkdir -p ~/.ssh
-        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -H $EC2_HOST >> ~/.ssh/known_hosts
-        echo "Step 1: SSH keys configured"
+        # Set up SSH agent and add private key
+        eval "$(ssh-agent -s)"  # Start the SSH agent
+        echo "$EC2_PRIVATE_KEY" > private_key.pem
+        chmod 600 private_key.pem
+        ssh-add private_key.pem
 
-        echo "Step 2: Cleaning up old files on EC2"
-        ssh $EC2_USER@$EC2_HOST "
-          rm -rf /home/$EC2_USER/ExpenseApp-26-Nov/backend/*
-          rm -rf /home/$EC2_USER/ExpenseApp-26-Nov/best-frontend/dist/*
+        # Deploy code to EC2
+        ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST "
+        cd $DEPLOY_DIR || exit 1
+
+        # Pull latest changes
+        git pull origin main || exit 1
+
+        # Backend setup
+        cd backend || exit 1
+        npm install --silent || exit 1
+
+        # Frontend setup
+        cd ../best-frontend || exit 1
+        npm install || exit 1
+        npm run build || exit 1
+
+        # Restart services
+        sudo systemctl restart backend.service || exit 1
+        sudo systemctl restart frontend.service || exit 1
         "
-        echo "Step 2: Old files cleaned up"
 
-        echo "Step 3: Transferring backend files to EC2"
-        scp -v -r ./backend $EC2_USER@$EC2_HOST:/home/$EC2_USER/ExpenseApp-26-Nov/backend
-        echo "Step 3: Backend files transferred"
-
-        echo "Step 4: Building and transferring frontend files"
-        cd best-frontend
-        npm install
-        npm run build
-        cd ..
-        scp -v -r ./best-frontend/dist $EC2_USER@$EC2_HOST:/home/$EC2_USER/ExpenseApp-26-Nov/best-frontend/dist
-        echo "Step 4: Frontend files built and transferred"
-
-        echo "Step 5: Installing backend dependencies and restarting backend service"
-        ssh $EC2_USER@$EC2_HOST "
-          cd /home/$EC2_USER/ExpenseApp-26-Nov/backend
-          npm install --silent
-          sudo systemctl restart backend.service
-        "
-        echo "Step 5: Backend service restarted"
-
-        echo "Step 6: Restarting frontend service"
-        ssh $EC2_USER@$EC2_HOST "
-          sudo systemctl daemon-reload
-          sudo systemctl restart frontend.service
-        "
-        echo "Step 6: Frontend service restarted"
-
-        echo "Deployment Completed Successfully!"
+    - name: Cleanup private key
+      run: |
+        rm -f private_key.pem
 
