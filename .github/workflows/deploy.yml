@@ -18,72 +18,52 @@ jobs:
       with:
         node-version: '20'
 
-    - name: Detect Changes
-      id: changes
-      run: |
-        echo "Detecting changes..."
-        BACKEND_CHANGED=$(git diff --name-only HEAD^ HEAD | grep -q '^backend/' && echo "true" || echo "false")
-        FRONTEND_CHANGED=$(git diff --name-only HEAD^ HEAD | grep -q '^best-frontend/' && echo "true" || echo "false")
-        echo "BACKEND_CHANGED=$BACKEND_CHANGED" >> $GITHUB_ENV
-        echo "FRONTEND_CHANGED=$FRONTEND_CHANGED" >> $GITHUB_ENV
-
-    - name: Deploy Backend if Changed
-      if: env.BACKEND_CHANGED == 'true'
+    - name: Deploy to EC2
       env:
         SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
         EC2_HOST: ${{ secrets.EC2_HOST }}
         EC2_USER: ${{ secrets.EC2_USER }}
       run: |
-        # Configure SSH
+        echo "Step 1: Setting up SSH keys"
         mkdir -p ~/.ssh
         echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan -H $EC2_HOST >> ~/.ssh/known_hosts
+        echo "Step 1: SSH keys configured"
 
-        # Clean up old backend files
+        echo "Step 2: Cleaning up old files on EC2"
         ssh $EC2_USER@$EC2_HOST "
           rm -rf /home/$EC2_USER/ExpenseApp-26-Nov/backend/*
+          rm -rf /home/$EC2_USER/ExpenseApp-26-Nov/best-frontend/dist/*
         "
+        echo "Step 2: Old files cleaned up"
 
-        # Transfer backend files
+        echo "Step 3: Transferring backend files to EC2"
         scp -v -r ./backend $EC2_USER@$EC2_HOST:/home/$EC2_USER/ExpenseApp-26-Nov/backend
+        echo "Step 3: Backend files transferred"
 
-        # Install dependencies and restart backend service
+        echo "Step 4: Building and transferring frontend files"
+        cd best-frontend
+        npm install
+        npm run build
+        cd ..
+        scp -v -r ./best-frontend/dist $EC2_USER@$EC2_HOST:/home/$EC2_USER/ExpenseApp-26-Nov/best-frontend/dist
+        echo "Step 4: Frontend files built and transferred"
+
+        echo "Step 5: Installing backend dependencies and restarting backend service"
         ssh $EC2_USER@$EC2_HOST "
           cd /home/$EC2_USER/ExpenseApp-26-Nov/backend
           npm install --silent
           sudo systemctl restart backend.service
         "
+        echo "Step 5: Backend service restarted"
 
-    - name: Deploy Frontend if Changed
-      if: env.FRONTEND_CHANGED == 'true'
-      env:
-        SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
-        EC2_HOST: ${{ secrets.EC2_HOST }}
-        EC2_USER: ${{ secrets.EC2_USER }}
-      run: |
-        # Configure SSH
-        mkdir -p ~/.ssh
-        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -H $EC2_HOST >> ~/.ssh/known_hosts
-
-        # Clean up old frontend files
+        echo "Step 6: Restarting frontend service"
         ssh $EC2_USER@$EC2_HOST "
-          rm -rf /home/$EC2_USER/ExpenseApp-26-Nov/best-frontend/dist/*
-        "
-
-        # Build frontend locally
-        cd best-frontend
-        npm install
-        npm run build
-        cd ..
-
-        # Transfer frontend build files
-        scp -v -r ./best-frontend/dist $EC2_USER@$EC2_HOST:/home/$EC2_USER/ExpenseApp-26-Nov/best-frontend/dist
-
-        # Restart frontend service
-        ssh $EC2_USER@$EC2_HOST "
+          sudo systemctl daemon-reload
           sudo systemctl restart frontend.service
         "
+        echo "Step 6: Frontend service restarted"
+
+        echo "Deployment Completed Successfully!"
 
