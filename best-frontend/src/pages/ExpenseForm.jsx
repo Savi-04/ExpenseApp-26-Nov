@@ -11,7 +11,7 @@ function ExpenseForm({ addTransaction }) {
   const handleChange = (e) => {
     const { name, value } = e.target;
     if(!isNaN(value))console.log("Not valid")     //to be removed
-    console.log(value) //to be removed
+    
     const copyExpenseInfo = { ...expenseInfo };
     copyExpenseInfo[name] = value;
     setExpenseInfo(copyExpenseInfo);

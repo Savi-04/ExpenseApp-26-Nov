@@ -1,6 +1,6 @@
 // MIDDLEWARES TO VALIDATE THE INPUTS IN LOGIN AND SIGNUP
 
-
+const sanitize = require('mongo-sanitize');
 const zod = require('zod')
 
 //signup validation schema
@@ -27,9 +27,17 @@ function signupValidation(req, res, next){
     const signup_data = req.body;
 
     try {
-        if(signupSchema.safeParse(signup_data).success){
+        const sanitizedSignupData = {
+            name: sanitize(signup_data.name),
+            email: sanitize(signup_data.email),
+            password: sanitize(signup_data.password),
+        };
+
+        if(signupSchema.safeParse(sanitizedSignupData).success){
+
             
     console.log("signup validation successful")
+            req.body = sanitizedSignupData;
 
             next(); 
             return
@@ -52,10 +60,14 @@ function signupValidation(req, res, next){
 
 function loginValidation(req, res, next){
     const login_data = req.body;
+    const sanitizedLoginData = {
+        email: sanitize(login_data.email),
+        password: sanitize(login_data.password),
+    };
 
     try {
-        if(loginSchema.safeParse(login_data).success){
-            
+        if(loginSchema.safeParse(sanitizedLoginData).success){
+            req.body = sanitizedLoginData;
             next(); 
             
             return

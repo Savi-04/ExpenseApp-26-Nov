@@ -17,7 +17,7 @@ function Login() {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        console.log(name, value);
+
         const copyLoginInfo = { ...loginInfo };
         copyLoginInfo[name] = value;
         setLoginInfo(copyLoginInfo);
@@ -43,7 +43,7 @@ function Login() {
             
             const { success, message, authorisation , name } = result;
             if (success) {
-                console.log(authorisation)           //to be removed
+
 
                 handleSuccess(message);
                 localStorage.setItem('token', authorisation);
@@ -51,12 +51,12 @@ function Login() {
                 setTimeout(() => {
                     
                     navigate('/home');
-                    console.log("namvigate to /home is successful")
+                    console.log("navigate to /home is successful")
  
                 }, 1000)
             } else  {
                 handleError(message);
-                console.log(result);
+
                 return
             }
             
