@@ -162,7 +162,7 @@ function Home() {
                     <img src={UserImage}></img>
                 </div>
                 <div>
-                <h1>Welcome {loggedInUser}</h1>
+                <h1>Hello {loggedInUser}</h1>
                 </div>
                 </div>
                 <button className={styles.logOut} onClick={handleLogout}>Logout</button>
